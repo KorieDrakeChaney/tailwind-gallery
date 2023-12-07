@@ -18,20 +18,18 @@ const DropDown = () => {
     }
   };
   return (
-    <div className="relative inline-block text-left">
-      <div>
-        <Button onClick={toggleOpen} type="button" color="secondary">
-          <span className="mx-2 text-txt">Options</span>
-          <FaChevronDown size={20} color={isDark ? "white" : "black"} />
-        </Button>
-      </div>
+    <div className="relative inline-block flex flex-col justify-between text-left">
+      <Button onClick={toggleOpen} type="button" color="secondary">
+        <span className="mx-2 text-txt">Options</span>
+        <FaChevronDown size={20} color={isDark ? "white" : "black"} />
+      </Button>
       <div
         key={isOpen.toString()}
         className={
           isOpen
-            ? `animate-normal animate-fade-down animate-duration-100 ease-out`
+            ? `animate-fade-down ease-out animate-normal animate-duration-100`
             : hasClicked
-              ? `animate-reverse animate-fade-down animate-duration-100 ease-out`
+              ? `pointer-events-none animate-fade-down ease-out animate-reverse animate-duration-100`
               : "invisible"
         }
       >
