@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: 180deg 85% 45%;
+    --color-secondary: 180deg 5% 100%;
+    --color-tertiary: 180deg 5% 60%;
+    --color-bkg: 180deg 20% 95%;
+    --color-txt: 211deg 45% 10%;
+  }
+
+  :root[data-theme="dark"] {
+    --color-primary: 180deg 50% 45%;
+    --color-secondary: 180deg 5% 25%;
+    --color-tertiary: 180deg 5% 60%;
+    --color-bkg: 211deg 45% 10%;
+    --color-txt: 180deg 20% 95%;
+  }
+}
