@@ -9,11 +9,16 @@ interface ComponentCardProps {
 const ComponentCard = ({ title, img }: ComponentCardProps) => {
   return (
     <Link
-      href={`/component/${img.slice(0, img.length - 4)}`}
+      href={`/component/${img}`}
       className="relative flex h-1/3 flex-col overflow-hidden rounded-md border-2 border-secondary shadow-md hover:shadow-lg active:border-primary"
     >
       <div className="board shadow-sm">
-        <Image src={img} alt={title} width={480} height={360} />
+        <Image
+          src={`/tailwind-gallery/${img}.png`}
+          alt={title}
+          width={480}
+          height={360}
+        />
       </div>
       <span className="flex justify-center font-semibold text-txt">
         {title}

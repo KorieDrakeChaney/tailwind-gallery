@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { DropDown } from "@/components";
-import { useEffect } from "react";
 import { ComponentFrame } from "@/components";
 export const metadata: Metadata = {
   title: "Drop Down",
