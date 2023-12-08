@@ -202,7 +202,7 @@ const LineGraph = ({
                 y={0}
                 width={width / (data.length + 1)}
                 height={heightOffset}
-                fill={["#5d635f", "#2c2e2c", "#6a6e6a"][index % 3]}
+                fill={["#5d635f", "#2c2e2c"][index % 2]}
                 fillOpacity={0.125}
               />
             </g>
@@ -229,6 +229,19 @@ const LineGraph = ({
                 fill={isDark ? "white" : "gray"}
                 className="peer h-full w-full transition-colors hover:fill-yellow-400"
               />
+              <rect
+                x={
+                  index * (width / (data.length + 1)) +
+                  width / (data.length + 1) / 4
+                }
+                y={0}
+                width={
+                  width / (data.length + 1) + width / (data.length + 1) / 4
+                }
+                height={heightOffset}
+                fill="transparent"
+                className="peer"
+              />
               <text
                 x={point.x + 5}
                 y={point.y - 10}
@@ -236,7 +249,8 @@ const LineGraph = ({
                 dominantBaseline="middle"
                 className="sm:text-md pointer-events-none invisible fill-[#f6f6fa] stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
               >
-                ({index}, {Math.floor(point.y)})
+                ({index}, {Math.floor(dataPast[index].y)}) ({index},{" "}
+                {Math.floor(point.y)})
               </text>
             </g>
           ))}
