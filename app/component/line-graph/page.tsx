@@ -29,7 +29,12 @@ const DropDownPage = () => {
 
   return (
     <ComponentFrame code={`Not Available`}>
-      <LineGraph maxValue={100} dataPoints={data} dataPointsPast={dataPrev} />
+      <LineGraph
+        yRangeEnd={100}
+        dataPoints={data}
+        dataPointsPast={dataPrev}
+        yRangeStart={0}
+      />
     </ComponentFrame>
   );
 };

@@ -29,7 +29,8 @@ const Page = () => {
 
   return (
     <LineGraph
-      maxValue={maxValue}
+      yRangeEnd={maxValue}
+      yRangeStart={0}
       dataPoints={data}
       dataPointsPast={dataPast}
     />
