@@ -226,7 +226,7 @@ const LineGraph = ({
                 cx={point.x}
                 cy={point.y}
                 r={5}
-                fill={isDark ? "white" : "black"}
+                fill={isDark ? "white" : "gray"}
                 className="peer h-full w-full transition-colors hover:fill-yellow-400"
               />
               <text
