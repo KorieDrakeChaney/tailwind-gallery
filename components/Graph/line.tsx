@@ -222,13 +222,6 @@ const LineGraph = ({
                 {point.label}
               </text>
               <title>{`(${index}, ${Math.floor(point.y)})`}</title>
-              <circle
-                cx={point.x}
-                cy={point.y}
-                r={5}
-                fill={isDark ? "white" : "gray"}
-                className="peer h-full w-full transition-colors hover:fill-yellow-400"
-              />
               <rect
                 x={
                   index * (width / (data.length + 1)) +
@@ -241,6 +234,13 @@ const LineGraph = ({
                 height={heightOffset}
                 fill="transparent"
                 className="peer"
+              />
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={5}
+                fill={isDark ? "white" : "gray"}
+                className="peer h-full w-full transition-colors hover:fill-yellow-400"
               />
               <text
                 x={point.x + 5}
