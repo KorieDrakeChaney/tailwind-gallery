@@ -2,7 +2,7 @@ import { LineGraph } from "@/components";
 import { Metadata } from "next";
 const Page = () => {
   let data = [];
-  let dataPrev = [];
+  let dataPast = [];
   let maxValue = 100;
   let date_array = [
     new Date("1995-12-17T03:24:00"),
@@ -18,14 +18,14 @@ const Page = () => {
   ];
   for (let i = 0; i < 10; i++) {
     data.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
-    dataPrev.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
+    dataPast.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
   }
 
   return (
     <LineGraph
       maxValue={maxValue}
       dataPoints={data}
-      dataPointsPast={dataPrev}
+      dataPointsPast={dataPast}
     />
   );
 };
