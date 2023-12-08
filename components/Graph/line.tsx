@@ -175,15 +175,16 @@ const LineGraph = ({
       className="flex h-[70vh] w-[90vw] flex-col justify-between rounded-sm lg:w-3/4"
     >
       <div className="relative h-full w-full border-b-2 border-txt border-opacity-20 bg-bkg px-2 py-2 transition-colors duration-75">
-        <svg className=" h-full w-full p-4 transition-all">
+        <svg
+          className="h-full w-full p-4 transition-all"
+          viewBox={`0 0 ${width} ${heightOffset}`}
+        >
           <g>
             <path
-              className="line"
               d={path}
               stroke="#293bff"
               fill="transparent"
               fillOpacity={0.3}
-              viewBox={`0 0 ${width} ${heightOffset}`}
             />
             <path
               className=" "
@@ -191,7 +192,6 @@ const LineGraph = ({
               stroke="gray"
               fill="transparent"
               fillOpacity={0.3}
-              viewBox={`0 0 ${width} ${heightOffset}`}
               strokeDasharray={"5"}
             />
           </g>
