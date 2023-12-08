@@ -22,7 +22,7 @@ const DropDownPage = () => {
         },
         */
 
-        <div class="relative inline-block text-left top-1/2 left-1/2">
+        <div class="relative inline-block text-left">
             <button class="flex items-center">
               <span class="mx-2 text-txt">Options</span>
             <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

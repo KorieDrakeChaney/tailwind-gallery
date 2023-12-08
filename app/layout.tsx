@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-bkg transition-colors duration-75">
+      <body className="bg-bkg transition-colors duration-150">
         <ThemeProvider>
           <Header />
           {children}

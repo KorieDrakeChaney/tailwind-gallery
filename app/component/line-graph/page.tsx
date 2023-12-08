@@ -7,22 +7,21 @@ export const metadata: Metadata = {
 };
 
 const DropDownPage = () => {
-  let dataPoints = [];
-
-  for (let i = 0; i < 5; i++) {
-    dataPoints.push(Math.floor(Math.random() * 100));
+  let data = [];
+  let dataPrev = [];
+  for (let i = 0; i < 100; i++) {
+    data.push(Math.random() * 100);
+    dataPrev.push(Math.random() * 100);
   }
 
   return (
     <ComponentFrame code={`Not Available`}>
       <LineGraph
         maxValue={100}
-        graphHeight={100}
-        yLabel={100}
-        xLabel={Date.now()}
-        yRangeEnd={19}
-        yRangeStart={1}
-        dataPoints={dataPoints}
+        yLabel={"Money"}
+        xLabel={"Time"}
+        dataPoints={data}
+        dataPointsPrev={dataPrev}
       />
     </ComponentFrame>
   );

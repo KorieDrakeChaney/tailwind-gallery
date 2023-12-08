@@ -18,7 +18,7 @@ const DropDown = () => {
     }
   };
   return (
-    <div className="relative inline-block flex flex-col justify-between text-left">
+    <div className="relative flex flex-col justify-between text-left">
       <Button onClick={toggleOpen} type="button" color="secondary">
         <span className="mx-2 text-txt">Options</span>
         <FaChevronDown size={20} color={isDark ? "white" : "black"} />
