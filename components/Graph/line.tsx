@@ -104,7 +104,7 @@ const LineGraph = ({
   }, [dataPast, heightOffset, width]);
 
   const randomizeData = () => {
-    let data = [];
+    let dataCurr = [];
     let dataPast = [];
     let date_array = [
       new Date("1995-12-17T03:24:00"),
@@ -119,7 +119,10 @@ const LineGraph = ({
       new Date("1995-12-17T12:24:00"),
     ];
     for (let i = 0; i < 10; i++) {
-      data.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
+      dataCurr.push({
+        xlabel: date_array[i],
+        ylabel: Math.random() * maxValue,
+      });
       dataPast.push({
         xlabel: date_array[i],
         ylabel: Math.random() * maxValue,
@@ -127,12 +130,12 @@ const LineGraph = ({
     }
 
     setData(
-      data.map((data, index) => {
+      dataCurr.map((data, index) => {
         const point = data.ylabel;
         const locale = data.xlabel.toLocaleString().split(" ");
         const time = locale[1]!.split(":");
         return {
-          x: (index + 1) * (width / (dataPoints.length + 1)),
+          x: (index + 1) * (width / (dataCurr.length + 1)),
           y: Math.min(
             Math.max(
               heightOffset * Math.min(Math.max(point / maxValue, 0), 1) +
@@ -151,7 +154,7 @@ const LineGraph = ({
         const locale = data.xlabel.toLocaleString().split(" ");
         const time = locale[1]!.split(":");
         return {
-          x: (index + 1) * (width / (dataPointsPast.length + 1)),
+          x: (index + 1) * (width / (dataPast.length + 1)),
           y: Math.min(
             Math.max(
               heightOffset * Math.min(Math.max((point ?? 0) / maxValue, 0), 1) +

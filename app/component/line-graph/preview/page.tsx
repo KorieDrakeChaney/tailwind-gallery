@@ -17,8 +17,14 @@ const Page = () => {
     new Date("1995-12-17T12:24:00"),
   ];
   for (let i = 0; i < 10; i++) {
-    data.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
-    dataPast.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
+    data.push({
+      xlabel: date_array[i % date_array.length],
+      ylabel: Math.random() * maxValue,
+    });
+    dataPast.push({
+      xlabel: date_array[i % date_array.length],
+      ylabel: Math.random() * maxValue,
+    });
   }
 
   return (
