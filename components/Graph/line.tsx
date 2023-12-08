@@ -63,7 +63,7 @@ const LineGraph = ({
       }
     };
     addEventListener("mousemove", handleMouse);
-  }, [height, heightOffset]);
+  }, []);
 
   useEffect(() => {
     setHeightOffset(height - 90);
@@ -303,7 +303,7 @@ const LineGraph = ({
                 x={0}
                 y={heightOffset + 17.5}
                 textAnchor="start"
-                className="sm:text-md pointer-events-none fill-[#f6f6fa] text-sm"
+                className="sm:text-md pointer-events-none fill-txt text-sm"
               >
                 {yRangeStart}
               </text>
@@ -311,7 +311,7 @@ const LineGraph = ({
                 x={0}
                 y={heightOffset / 20}
                 textAnchor="start"
-                className="sm:text-md pointer-events-none fill-[#f6f6fa] text-sm"
+                className="sm:text-md pointer-events-none fill-txt text-sm"
               >
                 {yRangeEnd}
               </text>
