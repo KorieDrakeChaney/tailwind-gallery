@@ -6,11 +6,14 @@ import { Button } from "@/components";
 import useResizeObserver from "use-resize-observer";
 
 interface LineGraphProps {
-  xLabel: string;
-  yLabel: string;
   maxValue: number;
-  dataPoints: number[];
-  dataPointsPrev: number[];
+  dataPoints: LineGraphData[];
+  dataPointsPast: LineGraphData[];
+}
+
+interface LineGraphData {
+  xlabel: Date;
+  ylabel: number;
 }
 
 const getPath = (
@@ -29,15 +32,17 @@ const getPath = (
 const LineGraph = ({
   maxValue,
   dataPoints,
-  dataPointsPrev,
-  xLabel,
-  yLabel,
+  dataPointsPast,
 }: LineGraphProps) => {
   const { isDark } = useTheme();
   const [path, setPath] = useState("");
-  const [pathPrev, setPathPrev] = useState("");
-  const [data, setData] = useState<{ x: number; y: number }[]>([]);
-  const [dataPrev, setDataPrev] = useState<{ x: number; y: number }[]>([]);
+  const [pathPast, setPathPast] = useState("");
+  const [data, setData] = useState<{ x: number; y: number; label: string }[]>(
+    [],
+  );
+  const [dataPast, setDataPast] = useState<
+    { x: number; y: number; label: string }[]
+  >([]);
   const ref = useRef(null);
   const { width = 1, height = 1 } = useResizeObserver({ ref });
   const [heightOffset, setHeightOffset] = useState(height - 90);
@@ -47,10 +52,11 @@ const LineGraph = ({
   }, [height]);
 
   useEffect(() => {
-    console.log(width / dataPoints.length);
-
     setData(
-      dataPoints.map((point, index) => {
+      dataPoints.map((data, index) => {
+        const point = data.ylabel;
+        const locale = data.xlabel.toLocaleString().split(" ");
+        const time = locale[1]!.split(":");
         return {
           x: (index + 1) * (width / (dataPoints.length + 1)),
           y: Math.min(
@@ -61,49 +67,57 @@ const LineGraph = ({
             ),
             heightOffset - heightOffset / 20,
           ),
+          label: `${time[0]}:${time[1]} ${locale[2]}`,
         };
       }),
     );
   }, [heightOffset, dataPoints, width, maxValue]);
 
   useEffect(() => {
-    setDataPrev(
-      dataPointsPrev.map((point, index) => {
+    setDataPast(
+      dataPointsPast.map((data, index) => {
+        const point = data.ylabel;
+        const locale = data.xlabel.toLocaleString().split(" ");
+        const time = locale[1]!.split(":");
         return {
-          x: (index + 1) * (width / (dataPointsPrev.length + 1)),
+          x: (index + 1) * (width / (dataPointsPast.length + 1)),
           y: Math.min(
             Math.max(
-              heightOffset * Math.min(Math.max(point / maxValue, 0), 1) +
+              heightOffset * Math.min(Math.max((point ?? 0) / maxValue, 0), 1) +
                 heightOffset / 20,
               heightOffset / 20,
             ),
             heightOffset - heightOffset / 20,
           ),
+          label: `${time[0]}:${time[1]} ${locale[2]}`,
         };
       }),
     );
-  }, [heightOffset, dataPointsPrev, width, maxValue]);
+  }, [heightOffset, dataPointsPast, width, maxValue]);
 
   useEffect(() => {
     setPath(getPath(data, width, heightOffset));
   }, [data, heightOffset, width]);
 
   useEffect(() => {
-    setPathPrev(getPath(dataPrev, width, heightOffset));
-  }, [dataPrev, heightOffset, width]);
+    setPathPast(getPath(dataPast, width, heightOffset));
+  }, [dataPast, heightOffset, width]);
 
   const randomizeData = () => {
     let data = [];
-    let dataPrev = [];
+    let dataPast = [];
     for (let i = 0; i < 10; i++) {
-      data.push(Math.random() * maxValue);
-      dataPrev.push(Math.random() * maxValue);
+      data.push({ xlabel: new Date(), ylabel: Math.random() * maxValue });
+      dataPast.push({ xlabel: new Date(), ylabel: Math.random() * maxValue });
     }
 
     setData(
-      data.map((point, index) => {
+      data.map((data, index) => {
+        const point = data.ylabel;
+        const locale = data.xlabel.toLocaleString().split(" ");
+        const time = locale[1]!.split(":");
         return {
-          x: (index + 1) * (width / (data.length + 1)),
+          x: (index + 1) * (width / (dataPoints.length + 1)),
           y: Math.min(
             Math.max(
               heightOffset * Math.min(Math.max(point / maxValue, 0), 1) +
@@ -112,21 +126,26 @@ const LineGraph = ({
             ),
             heightOffset - heightOffset / 20,
           ),
+          label: `${time[0]}:${time[1]} ${locale[2]}`,
         };
       }),
     );
-    setDataPrev(
-      dataPrev.map((point, index) => {
+    setDataPast(
+      dataPast.map((data, index) => {
+        const point = data.ylabel;
+        const locale = data.xlabel.toLocaleString().split(" ");
+        const time = locale[1]!.split(":");
         return {
-          x: (index + 1) * (width / (data.length + 1)),
+          x: (index + 1) * (width / (dataPointsPast.length + 1)),
           y: Math.min(
             Math.max(
-              heightOffset * Math.min(Math.max(point / maxValue, 0), 1) +
+              heightOffset * Math.min(Math.max((point ?? 0) / maxValue, 0), 1) +
                 heightOffset / 20,
               heightOffset / 20,
             ),
             heightOffset - heightOffset / 20,
           ),
+          label: `${time[0]}:${time[1]} ${locale[2]}`,
         };
       }),
     );
@@ -143,14 +162,14 @@ const LineGraph = ({
             <path
               className="line"
               d={path}
-              stroke="purple"
+              stroke="#293bff"
               fill="transparent"
               fillOpacity={0.3}
               viewBox={`0 0 ${width} ${heightOffset}`}
             />
             <path
               className=" "
-              d={pathPrev}
+              d={pathPast}
               stroke="gray"
               fill="transparent"
               fillOpacity={0.3}
@@ -158,31 +177,46 @@ const LineGraph = ({
               strokeDasharray={"5"}
             />
           </g>
-          {data.map((point, index) => (
+          {[...Array(data.length + 1)].map((_, index) => (
             <g key={index}>
               <rect
-                x={index * (width / (dataPrev.length + 1))}
+                x={index * (width / (data.length + 1))}
                 y={0}
-                width={width / (dataPrev.length + 1)}
+                width={width / (data.length + 1)}
                 height={heightOffset}
                 fill={["#5d635f", "#2c2e2c", "#6a6e6a"][index % 3]}
                 fillOpacity={0.125}
               />
+            </g>
+          ))}
+          {data.map((point, index) => (
+            <g key={index}>
+              <text
+                x={
+                  index * (width / (data.length + 1)) +
+                  width / (data.length + 1)
+                }
+                y={heightOffset - 7.5}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="pointer-events-none invisible fill-txt stroke-none text-xs sm:visible"
+              >
+                {point.label}
+              </text>
               <title>{`(${index}, ${Math.floor(point.y)})`}</title>
               <circle
                 cx={point.x}
                 cy={point.y}
                 r={5}
                 fill={isDark ? "white" : "black"}
-                className="peer transition-colors hover:fill-yellow-400"
+                className="peer h-full w-full transition-colors hover:fill-yellow-400"
               />
               <text
                 x={point.x + 5}
                 y={point.y - 10}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                stroke={isDark ? "white" : "black"}
-                className="pointer-events-none invisible peer-hover:visible"
+                className="sm:text-md pointer-events-none invisible fill-[#f6f6fa] stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
               >
                 ({index}, {Math.floor(point.y)})
               </text>
@@ -202,20 +236,6 @@ const LineGraph = ({
             y2={heightOffset}
             stroke={isDark ? "white" : "black"}
           />
-          <text
-            x="50%"
-            y={heightOffset - 2.5}
-            textAnchor="middle"
-            stroke={isDark ? "white" : "black"}
-          >
-            {xLabel}
-          </text>{" "}
-          {/* x-axis label */}
-          <g transform={`translate(${5}, ${heightOffset / 2}) rotate(-270)`}>
-            <text textAnchor="middle" stroke={isDark ? "white" : "black"}>
-              {yLabel}
-            </text>
-          </g>
         </svg>
       </div>
 

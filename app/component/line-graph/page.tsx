@@ -9,20 +9,27 @@ export const metadata: Metadata = {
 const DropDownPage = () => {
   let data = [];
   let dataPrev = [];
-  for (let i = 0; i < 100; i++) {
-    data.push(Math.random() * 100);
-    dataPrev.push(Math.random() * 100);
+  let maxValue = 100;
+  let date_array = [
+    new Date("1995-12-17T03:24:00"),
+    new Date("1995-12-17T04:24:00"),
+    new Date("1995-12-17T05:24:00"),
+    new Date("1995-12-17T06:24:00"),
+    new Date("1995-12-17T07:24:00"),
+    new Date("1995-12-17T08:24:00"),
+    new Date("1995-12-17T09:24:00"),
+    new Date("1995-12-17T10:24:00"),
+    new Date("1995-12-17T11:24:00"),
+    new Date("1995-12-17T12:24:00"),
+  ];
+  for (let i = 0; i < 10; i++) {
+    data.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
+    dataPrev.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
   }
 
   return (
     <ComponentFrame code={`Not Available`}>
-      <LineGraph
-        maxValue={100}
-        yLabel={"Money"}
-        xLabel={"Time"}
-        dataPoints={data}
-        dataPointsPrev={dataPrev}
-      />
+      <LineGraph maxValue={100} dataPoints={data} dataPointsPast={dataPrev} />
     </ComponentFrame>
   );
 };
