@@ -245,7 +245,6 @@ const LineGraph = ({
                 >
                   {point.label}
                 </text>
-                <title>{`(${index}, ${Math.floor(point.y)})`}</title>
                 <rect
                   x={point.x - (width / (dataPoints.length + 1) + 20) / 2}
                   y={0}
