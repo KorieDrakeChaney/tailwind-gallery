@@ -221,7 +221,7 @@ const LineGraph = ({
               return (
                 <g key={index}>
                   <rect
-                    x={x - (width / (dataPoints.length + 1) + 20) / 2}
+                    x={x - width / (dataPoints.length + 1) / 2}
                     y={0}
                     width={width / (dataPoints.length + 1)}
                     height={heightOffset}
