@@ -288,7 +288,7 @@ const LineGraph = ({
                     y={mouseY - 10}
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    className="sm:text-md pointer-events-none invisible  fill-[#f6f6fa] stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                    className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
                   >
                     {renderCurrTooltip(index)}
                   </text>
@@ -297,7 +297,7 @@ const LineGraph = ({
                     y={mouseY + 10}
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    className="sm:text-md pointer-events-none invisible  fill-[#f6f6fa] stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                    className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
                   >
                     {renderPastTooltip(index)}
                   </text>
