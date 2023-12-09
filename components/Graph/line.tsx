@@ -223,7 +223,7 @@ const LineGraph = ({
                   <rect
                     x={x - (width / (dataPoints.length + 1) + 20) / 2}
                     y={0}
-                    width={width / (dataPoints.length + 1) + 20}
+                    width={width / (dataPoints.length + 1)}
                     height={heightOffset}
                     stroke="transparent"
                     fillOpacity={0}
