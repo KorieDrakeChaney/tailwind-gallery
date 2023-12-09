@@ -262,82 +262,88 @@ const LineGraph = ({
               const time = locale[1]!.split(":");
               const x = index * (width / dataPointsPast.length);
               return (
-                <g key={index} className="peer ">
-                  <g className="peer">
-                    <rect
-                      x={
-                        index == 0
-                          ? 20
-                          : index * (width / dataPoints.length) -
-                            width / dataPoints.length / 2 +
-                            20
-                      }
-                      y={0}
-                      width={
-                        index == 0 || index == dataPoints.length - 1
-                          ? width / dataPoints.length / 2
-                          : width / dataPoints.length
-                      }
-                      height={heightOffset}
-                      stroke="transparent"
-                      fillOpacity={0}
-                      className="peer"
-                    />
-                    {[
-                      ...Array(Object.entries(dataPoints[0].ylabel).length),
-                    ].map((_, i) => {
-                      const point = data[i][index];
-                      return (
-                        <CircleGroup key={i} point={point} index={index} />
-                      );
-                    })}
-                  </g>
-                  {index != 0 && index != dataPoints.length - 1 && (
+                data.length > 0 && (
+                  <g key={index} className="peer ">
+                    <g className="peer">
+                      <rect
+                        x={
+                          index == 0
+                            ? 20
+                            : index * (width / dataPoints.length) -
+                              width / dataPoints.length / 2 +
+                              20
+                        }
+                        y={0}
+                        width={
+                          index == 0 || index == dataPoints.length - 1
+                            ? width / dataPoints.length / 2
+                            : width / dataPoints.length
+                        }
+                        height={heightOffset}
+                        stroke="transparent"
+                        fillOpacity={0}
+                        className="peer"
+                      />
+                      {[
+                        ...Array(Object.entries(dataPoints[0]!.ylabel).length),
+                      ].map((_, i) => {
+                        if (data.length != 0) {
+                          const point = data[i]![index];
+                          return (
+                            <CircleGroup key={i} point={point!} index={index} />
+                          );
+                        }
+                      })}
+                    </g>
+                    {index != 0 &&
+                      index != dataPoints.length - 1 &&
+                      data.length > 0 && (
+                        <text
+                          x={index * (width / dataPoints.length) + 20}
+                          y={heightOffset - 7.5}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          className="pointer-events-none invisible fill-white stroke-none text-xs sm:visible"
+                        >
+                          {`${time[0]}:${time[1]} ${locale[2]}`}
+                        </text>
+                      )}
                     <text
-                      x={index * (width / dataPoints.length) + 20}
-                      y={heightOffset - 7.5}
+                      x={
+                        index != 0
+                          ? index != dataPoints.length - 1
+                            ? x + 20
+                            : index * (width / dataPoints.length) -
+                              width / dataPoints.length / 2 +
+                              20
+                          : width / dataPoints.length / 2 + 20
+                      }
+                      y={mouseY - 10}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="pointer-events-none invisible fill-txt stroke-none text-xs sm:visible"
+                      className="sm:text-md pointer-events-none invisible  fill-white stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
                     >
-                      {`${time[0]}:${time[1]} ${locale[2]}`}
+                      {renderCurrTooltip(index)}
                     </text>
-                  )}
-                  <text
-                    x={
-                      index != 0
-                        ? index != dataPoints.length - 1
-                          ? x + 20
-                          : index * (width / dataPoints.length) -
-                            width / dataPoints.length / 2 +
-                            20
-                        : width / dataPoints.length / 2 + 20
-                    }
-                    y={mouseY - 10}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
-                  >
-                    {renderCurrTooltip(index)}
-                  </text>
-                  <text
-                    x={
-                      index != 0
-                        ? index != dataPoints.length - 1
-                          ? x + 20
-                          : index * (width / dataPoints.length) -
-                            width / dataPoints.length / 2 +
-                            20
-                        : width / dataPoints.length / 2 + 20
-                    }
-                    y={mouseY + 10}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
-                  >
-                    {renderPastTooltip(index)}
-                  </text>
-                </g>
+                    <text
+                      x={
+                        index != 0
+                          ? index != dataPoints.length - 1
+                            ? x + 20
+                            : index * (width / dataPoints.length) -
+                              width / dataPoints.length / 2 +
+                              20
+                          : width / dataPoints.length / 2 + 20
+                      }
+                      y={mouseY + 10}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="sm:text-md pointer-events-none invisible  fill-white stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                    >
+                      {renderPastTooltip(index)}
+                    </text>
+                  </g>
+                )
               );
             })}
 
