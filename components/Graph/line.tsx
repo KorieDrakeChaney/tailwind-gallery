@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { useTheme } from "@/contexts";
-import { Button } from "@/components";
 import useResizeObserver from "use-resize-observer";
 
 interface LineGraphProps {
@@ -16,6 +15,32 @@ interface LineGraphData {
   xlabel: Date;
   ylabel: { [key: string]: number | null };
 }
+
+interface CircleGroupProps {
+  point: { x: number; y: number | null };
+  index: number;
+}
+
+const CircleGroup = memo(({ point, index }: CircleGroupProps) => {
+  return (
+    <g
+      key={`${point.x}-${point.y}`}
+      className="fill-white peer-hover:fill-yellow-400"
+    >
+      {point.y !== null && (
+        <circle
+          key={point.y}
+          cx={point.x}
+          cy={point.y}
+          r={3.5}
+          className="h-full w-full transition-colors"
+        />
+      )}
+    </g>
+  );
+});
+
+CircleGroup.displayName = "CircleGroup";
 
 const getPath = (data: { x: number; y: number | null }[]) => {
   let first_y: number;
@@ -121,7 +146,7 @@ const LineGraph = ({
         new_data[num][index] = {
           x:
             index * (width / dataPointsPast.length) +
-            width / dataPoints.length / 2 +
+            width / dataPointsPast.length / 2 +
             20,
           y:
             point == null
@@ -245,19 +270,7 @@ const LineGraph = ({
                     ].map((_, i) => {
                       const point = data[i][index];
                       return (
-                        <g
-                          key={index}
-                          className="fill-white peer-hover:fill-yellow-400"
-                        >
-                          {point.y !== null && (
-                            <circle
-                              cx={point.x}
-                              cy={point.y}
-                              r={3.5}
-                              className="h-full w-full transition-colors"
-                            />
-                          )}
-                        </g>
+                        <CircleGroup key={i} point={point} index={index} />
                       );
                     })}
                   </g>
