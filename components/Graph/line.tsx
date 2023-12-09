@@ -120,12 +120,10 @@ const LineGraph = ({
               ? null
               : Math.min(
                   Math.max(
-                    heightOffset -
-                      heightOffset * (point / yRangeEnd) +
-                      heightOffset / 20,
-                    heightOffset / 20,
+                    heightOffset - heightOffset * (point / yRangeEnd),
+                    0,
                   ),
-                  heightOffset - heightOffset / 20,
+                  heightOffset,
                 ),
         };
         num++;
@@ -158,12 +156,10 @@ const LineGraph = ({
               ? null
               : Math.min(
                   Math.max(
-                    heightOffset -
-                      heightOffset * (point / yRangeEnd) +
-                      heightOffset / 20,
-                    heightOffset / 20,
+                    heightOffset - heightOffset * (point / yRangeEnd),
+                    0,
                   ),
-                  heightOffset - heightOffset / 20,
+                  heightOffset,
                 ),
         };
         num++;
@@ -257,7 +253,6 @@ const LineGraph = ({
             {dataPoints.map((point_data, index) => {
               const locale = point_data.xlabel.toLocaleString().split(" ");
               const time = locale[1]!.split(":");
-              const x = index * (width / dataPointsPast.length);
               return (
                 data.length > 0 && (
                   <g key={index} className="peer ">
