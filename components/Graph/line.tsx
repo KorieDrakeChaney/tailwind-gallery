@@ -238,7 +238,7 @@ const LineGraph = ({
                 />
               ))}
             </g>
-            {[...Array(dataPoints.length - 1)].map((_, index) => (
+            {[...Array(dataPoints.length)].map((_, index) => (
               <g key={index}>
                 <rect
                   x={index * (width / dataPoints.length) + 20}
