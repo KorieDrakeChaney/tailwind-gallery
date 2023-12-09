@@ -43,21 +43,19 @@ const CircleGroup = memo(({ point, index }: CircleGroupProps) => {
 CircleGroup.displayName = "CircleGroup";
 
 const getPath = (data: { x: number; y: number | null }[]) => {
-  let first_y: number;
   let tempPath = "M";
-  let prev_y = 0;
-  let prev_x = 0;
-  data.forEach((point) => {
-    prev_x = point.x;
+  let lastPoint = "";
+  data.forEach((point, index) => {
     if (point.y !== null) {
-      if (first_y === undefined) {
-        first_y = point.y;
+      lastPoint = point.x + "," + point.y;
+      tempPath += lastPoint;
+      if (index != data.length - 1) {
+        tempPath += "L";
       }
-      prev_y = point.y;
-      tempPath += point.x + "," + prev_y + "L";
+    } else if (index == data.length - 1) {
+      tempPath += lastPoint;
     }
   });
-  tempPath += prev_x + 20 + "," + prev_y;
   return tempPath;
 };
 
