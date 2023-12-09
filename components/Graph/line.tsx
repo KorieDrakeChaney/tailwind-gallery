@@ -82,7 +82,10 @@ const LineGraph = ({
       let num = 0;
       for (const [_, point] of Object.entries(data.ylabel)) {
         new_data[num][index] = {
-          x: index * (width / dataPoints.length) + 20,
+          x:
+            index * (width / dataPoints.length) +
+            width / dataPoints.length / 2 +
+            20,
           y:
             point == null
               ? null
@@ -113,7 +116,10 @@ const LineGraph = ({
       let num = 0;
       for (const [_, point] of Object.entries(data.ylabel)) {
         new_data[num][index] = {
-          x: index * (width / dataPointsPast.length) + 20,
+          x:
+            index * (width / dataPointsPast.length) +
+            width / dataPoints.length / 2 +
+            20,
           y:
             point == null
               ? null
