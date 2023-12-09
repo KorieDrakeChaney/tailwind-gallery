@@ -25,7 +25,7 @@ const CircleGroup = memo(({ point, index }: CircleGroupProps) => {
   return (
     <g
       key={`${point.x}-${point.y}`}
-      className="fill-white peer-hover:fill-yellow-400"
+      className="fill-txt peer-hover:fill-yellow-400"
     >
       {point.y !== null && (
         <circle
