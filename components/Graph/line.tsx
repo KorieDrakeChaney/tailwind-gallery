@@ -315,7 +315,7 @@ const LineGraph = ({
             <line
               x1="20"
               y1={heightOffset}
-              x2={width}
+              x2={width + 20}
               y2={heightOffset}
               stroke={isDark ? "white" : "black"}
             />
