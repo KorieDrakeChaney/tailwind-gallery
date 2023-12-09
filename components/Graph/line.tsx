@@ -17,18 +17,20 @@ interface LineGraphData {
   ylabel: { [key: string]: number | null };
 }
 
-const getPath = (
-  data: { x: number; y: number | null }[],
-  width: number,
-  height: number,
-) => {
-  let tempPath = "M20," + height + "L";
-  data.forEach((point) => {
+const getPath = (data: { x: number; y: number | null }[]) => {
+  let tempPath = "M";
+  let prev_path = "0";
+  data.forEach((point, index) => {
     if (point.y !== null) {
-      tempPath += point.x + "," + point.y + "L";
+      prev_path = point.x + "," + point.y;
+      tempPath += prev_path;
+      if (index !== data.length - 1) {
+        tempPath += "L";
+      }
+    } else if (index === data.length - 1) {
+      tempPath += prev_path;
     }
   });
-  tempPath += width + 20 + "," + height;
   return tempPath;
 };
 
@@ -80,7 +82,7 @@ const LineGraph = ({
       let num = 0;
       for (const [_, point] of Object.entries(data.ylabel)) {
         new_data[num][index] = {
-          x: (index + 1) * (width / (dataPoints.length + 1)) + 20,
+          x: index * (width / dataPoints.length) + 20,
           y:
             point == null
               ? null
@@ -111,7 +113,7 @@ const LineGraph = ({
       let num = 0;
       for (const [_, point] of Object.entries(data.ylabel)) {
         new_data[num][index] = {
-          x: (index + 1) * (width / (dataPointsPast.length + 1)) + 20,
+          x: index * (width / dataPointsPast.length) + 20,
           y:
             point == null
               ? null
@@ -132,14 +134,15 @@ const LineGraph = ({
   }, [heightOffset, dataPointsPast, width, yRangeEnd]);
 
   useEffect(() => {
-    const new_path = data.map((data) => getPath(data, width, heightOffset));
+    const new_path = data.map((data) => getPath(data));
     setPath(new_path);
-  }, [data, heightOffset, width]);
+  }, [data]);
 
   useEffect(() => {
-    const new_path = dataPast.map((data) => getPath(data, width, heightOffset));
+    const new_path = dataPast.map((data) => getPath(data));
+    console.log(new_path);
     setPathPast(new_path);
-  }, [dataPast, heightOffset, width]);
+  }, [dataPast]);
 
   const renderCurrTooltip = (index: number) => {
     let tooltip = "";
@@ -201,12 +204,12 @@ const LineGraph = ({
                 />
               ))}
             </g>
-            {[...Array(dataPoints.length + 1)].map((_, index) => (
+            {[...Array(dataPoints.length - 1)].map((_, index) => (
               <g key={index}>
                 <rect
-                  x={index * (width / (dataPoints.length + 1)) + 20}
+                  x={index * (width / dataPointsPast.length) + 20}
                   y={0}
-                  width={width / (dataPoints.length + 1)}
+                  width={width / dataPoints.length}
                   height={heightOffset}
                   fill={["#5d635f", "#2c2e2c"][index % 2]}
                   fillOpacity={0.125}
@@ -216,21 +219,20 @@ const LineGraph = ({
             {dataPoints.map((point_data, index) => {
               const locale = point_data.xlabel.toLocaleString().split(" ");
               const time = locale[1]!.split(":");
-              const x =
-                (index + 1) * (width / (dataPointsPast.length + 1)) + 20;
+              const x = index * (width / dataPointsPast.length);
               return (
                 <g key={index}>
                   <rect
-                    x={x - width / (dataPoints.length + 1) / 2}
+                    x={x + 20}
                     y={0}
-                    width={width / (dataPoints.length + 1)}
+                    width={width / dataPoints.length}
                     height={heightOffset}
                     stroke="transparent"
                     fillOpacity={0}
                     className="peer"
                   />
                   <text
-                    x={x}
+                    x={x + width / dataPoints.length / 2 + 20}
                     y={heightOffset - 7.5}
                     textAnchor="middle"
                     dominantBaseline="middle"
@@ -239,7 +241,7 @@ const LineGraph = ({
                     {`${time[0]}:${time[1]} ${locale[2]}`}
                   </text>
                   <text
-                    x={x}
+                    x={x + width / dataPoints.length / 2 + 20}
                     y={mouseY - 10}
                     textAnchor="middle"
                     dominantBaseline="middle"
@@ -248,7 +250,7 @@ const LineGraph = ({
                     {renderCurrTooltip(index)}
                   </text>
                   <text
-                    x={x}
+                    x={x + width / dataPoints.length / 2 + 20}
                     y={mouseY + 10}
                     textAnchor="middle"
                     dominantBaseline="middle"
@@ -286,7 +288,7 @@ const LineGraph = ({
             <line
               x1="20"
               y1={heightOffset}
-              x2={width + 20}
+              x2={width}
               y2={heightOffset}
               stroke={isDark ? "white" : "black"}
             />
@@ -294,7 +296,7 @@ const LineGraph = ({
             <g>
               <text
                 x={0}
-                y={heightOffset + 17.5}
+                y={heightOffset}
                 textAnchor="start"
                 className="sm:text-md pointer-events-none fill-txt text-sm"
               >
@@ -302,7 +304,7 @@ const LineGraph = ({
               </text>
               <text
                 x={0}
-                y={heightOffset / 20}
+                y={0}
                 textAnchor="start"
                 className="sm:text-md pointer-events-none fill-txt text-sm"
               >
