@@ -111,7 +111,7 @@ const LineGraph = ({
             index == 0
               ? 20
               : index == dataPoints.length - 1
-                ? width
+                ? width + 20
                 : index * (width / dataPoints.length) +
                   width / dataPoints.length / 2 +
                   20,
@@ -147,7 +147,7 @@ const LineGraph = ({
             index == 0
               ? 20
               : index == dataPointsPast.length - 1
-                ? width
+                ? width + 20
                 : index * (width / dataPointsPast.length) +
                   width / dataPointsPast.length / 2 +
                   20,
@@ -207,7 +207,7 @@ const LineGraph = ({
         {heightOffset > 100 && (
           <svg
             className="h-full w-full p-4 transition-all"
-            viewBox={`0 0 ${width} ${heightOffset}`}
+            viewBox={`0 0 ${width + 20} ${heightOffset}`}
           >
             <g>
               {path.map((d, index) => (
