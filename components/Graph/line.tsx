@@ -18,19 +18,22 @@ interface LineGraphData {
 }
 
 const getPath = (data: { x: number; y: number | null }[]) => {
-  let tempPath = "M";
-  let prev_path = "0";
-  data.forEach((point, index) => {
+  let first_y: number;
+  let tempPath = "";
+  let prev_y = 0;
+  let prev_x = 0;
+  data.forEach((point) => {
+    prev_x = point.x;
     if (point.y !== null) {
-      prev_path = point.x + "," + point.y;
-      tempPath += prev_path;
-      if (index !== data.length - 1) {
-        tempPath += "L";
+      if (first_y === undefined) {
+        first_y = point.y;
+        tempPath += "M20" + "," + point.y + "L";
       }
-    } else if (index === data.length - 1) {
-      tempPath += prev_path;
+      prev_y = point.y;
+      tempPath += point.x + "," + prev_y + "L";
     }
   });
+  tempPath += prev_x + 20 + "," + prev_y;
   return tempPath;
 };
 
