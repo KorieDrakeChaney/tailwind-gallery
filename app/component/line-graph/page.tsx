@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const DropDownPage = () => {
   let data = [];
-  let dataPrev = [];
+  let dataPast = [];
   let maxValue = 100;
   let date_array = [
     new Date("1995-12-17T03:24:00"),
@@ -23,8 +23,21 @@ const DropDownPage = () => {
     new Date("1995-12-17T12:24:00"),
   ];
   for (let i = 0; i < 10; i++) {
-    data.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
-    dataPrev.push({ xlabel: date_array[i], ylabel: Math.random() * maxValue });
+    data.push({
+      xlabel: date_array[i % date_array.length],
+      ylabel: {
+        label1: Math.random() < 0.5 ? null : Math.random() * maxValue,
+        label2: Math.random() < 0.5 ? null : Math.random() * maxValue,
+        label3: Math.random() < 0.5 ? null : Math.random() * maxValue,
+      },
+    });
+    dataPast.push({
+      xlabel: date_array[i % date_array.length],
+      ylabel: {
+        label1: Math.random() * maxValue,
+        label2: Math.random() * maxValue,
+      },
+    });
   }
 
   return (
@@ -32,7 +45,7 @@ const DropDownPage = () => {
       <LineGraph
         yRangeEnd={100}
         dataPoints={data}
-        dataPointsPast={dataPrev}
+        dataPointsPast={dataPast}
         yRangeStart={0}
       />
     </ComponentFrame>

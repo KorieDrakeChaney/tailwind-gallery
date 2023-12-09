@@ -14,17 +14,19 @@ interface LineGraphProps {
 
 interface LineGraphData {
   xlabel: Date;
-  ylabel: number;
+  ylabel: { [key: string]: number | null };
 }
 
 const getPath = (
-  data: { x: number; y: number }[],
+  data: { x: number; y: number | null }[],
   width: number,
   height: number,
 ) => {
   let tempPath = "M20," + height + "L";
   data.forEach((point) => {
-    tempPath += point.x + "," + point.y + "L";
+    if (point.y !== null) {
+      tempPath += point.x + "," + point.y + "L";
+    }
   });
   tempPath += width + 20 + "," + 0;
   return tempPath;
@@ -37,14 +39,12 @@ const LineGraph = ({
   yRangeStart = 0,
 }: LineGraphProps) => {
   const { isDark } = useTheme();
-  const [path, setPath] = useState("");
-  const [pathPast, setPathPast] = useState("");
-  const [data, setData] = useState<{ x: number; y: number; label: string }[]>(
+  const [path, setPath] = useState<string[]>([]);
+  const [pathPast, setPathPast] = useState<string[]>([]);
+  const [data, setData] = useState<{ x: number; y: number | null }[][]>([]);
+  const [dataPast, setDataPast] = useState<{ x: number; y: number | null }[][]>(
     [],
   );
-  const [dataPast, setDataPast] = useState<
-    { x: number; y: number; label: string }[]
-  >([]);
   const ref = useRef(null);
 
   const { width = 1, height = 1 } = useResizeObserver({ ref });
@@ -70,126 +70,95 @@ const LineGraph = ({
   }, [height]);
 
   useEffect(() => {
-    setData(
-      dataPoints.map((data, index) => {
-        const point = data.ylabel;
-        const locale = data.xlabel.toLocaleString().split(" ");
-        const time = locale[1]!.split(":");
-        return {
+    let new_data: { x: number; y: number | null }[][] = Array(
+      Object.entries(dataPoints[0].ylabel).length,
+    )
+      .fill(null)
+      .map(() => []);
+
+    dataPoints.map((data, index) => {
+      let num = 0;
+      for (const [_, point] of Object.entries(data.ylabel)) {
+        new_data[num][index] = {
           x: (index + 1) * (width / (dataPoints.length + 1)) + 20,
-          y: Math.min(
-            Math.max(
-              heightOffset -
-                heightOffset * (point / yRangeEnd) +
-                heightOffset / 20,
-              heightOffset / 20,
-            ),
-            heightOffset - heightOffset / 20,
-          ),
-          label: `${time[0]}:${time[1]} ${locale[2]}`,
+          y:
+            point == null
+              ? null
+              : Math.min(
+                  Math.max(
+                    heightOffset -
+                      heightOffset * (point / yRangeEnd) +
+                      heightOffset / 20,
+                    heightOffset / 20,
+                  ),
+                  heightOffset - heightOffset / 20,
+                ),
         };
-      }),
-    );
+        num++;
+      }
+    });
+    setData(new_data);
   }, [heightOffset, dataPoints, width, yRangeEnd]);
 
   useEffect(() => {
-    setDataPast(
-      dataPointsPast.map((data, index) => {
-        const point = data.ylabel;
-        const locale = data.xlabel.toLocaleString().split(" ");
-        const time = locale[1]!.split(":");
-        return {
+    let new_data: { x: number; y: number | null }[][] = Array(
+      Object.entries(dataPointsPast[0].ylabel).length,
+    )
+      .fill(null)
+      .map(() => []);
+
+    dataPointsPast.map((data, index) => {
+      let num = 0;
+      for (const [_, point] of Object.entries(data.ylabel)) {
+        new_data[num][index] = {
           x: (index + 1) * (width / (dataPointsPast.length + 1)) + 20,
-          y: Math.min(
-            Math.max(
-              heightOffset -
-                heightOffset * (point / yRangeEnd) +
-                heightOffset / 20,
-              heightOffset / 20,
-            ),
-            heightOffset - heightOffset / 20,
-          ),
-          label: `${time[0]}:${time[1]} ${locale[2]}`,
+          y:
+            point == null
+              ? null
+              : Math.min(
+                  Math.max(
+                    heightOffset -
+                      heightOffset * (point / yRangeEnd) +
+                      heightOffset / 20,
+                    heightOffset / 20,
+                  ),
+                  heightOffset - heightOffset / 20,
+                ),
         };
-      }),
-    );
+        num++;
+      }
+    });
+    setDataPast(new_data);
   }, [heightOffset, dataPointsPast, width, yRangeEnd]);
 
   useEffect(() => {
-    setPath(getPath(data, width, heightOffset));
+    const new_path = data.map((data) => getPath(data, width, heightOffset));
+    setPath(new_path);
   }, [data, heightOffset, width]);
 
   useEffect(() => {
-    setPathPast(getPath(dataPast, width, heightOffset));
+    const new_path = dataPast.map((data) => getPath(data, width, heightOffset));
+    setPathPast(new_path);
   }, [dataPast, heightOffset, width]);
 
-  const randomizeData = () => {
-    dataPoints = [];
-    dataPointsPast = [];
-    let date_array = [
-      new Date("1995-12-17T03:24:00"),
-      new Date("1995-12-17T04:24:00"),
-      new Date("1995-12-17T05:24:00"),
-      new Date("1995-12-17T06:24:00"),
-      new Date("1995-12-17T07:24:00"),
-      new Date("1995-12-17T08:24:00"),
-      new Date("1995-12-17T09:24:00"),
-      new Date("1995-12-17T10:24:00"),
-      new Date("1995-12-17T11:24:00"),
-      new Date("1995-12-17T12:24:00"),
-    ];
-    for (let i = 0; i < 10; i++) {
-      dataPoints.push({
-        xlabel: date_array[i],
-        ylabel: Math.random() * yRangeEnd,
-      });
-      dataPointsPast.push({
-        xlabel: date_array[i],
-        ylabel: Math.random() * yRangeEnd,
-      });
+  const renderCurrTooltip = (index: number) => {
+    let tooltip = "";
+    for (const [_, point] of Object.entries(dataPoints[index].ylabel)) {
+      if (point !== null) {
+        tooltip += `${Math.floor(point)} `;
+      }
     }
+    return tooltip;
+  };
 
-    setData(
-      dataPoints.map((data, index) => {
-        const point = data.ylabel;
-        const locale = data.xlabel.toLocaleString().split(" ");
-        const time = locale[1]!.split(":");
-        return {
-          x: (index + 1) * (width / (dataPoints.length + 1)) + 20,
-          y: Math.min(
-            Math.max(
-              heightOffset -
-                heightOffset * (point / yRangeEnd) +
-                heightOffset / 20,
-              heightOffset / 20,
-            ),
-            heightOffset - heightOffset / 20,
-          ),
-          label: `${time[0]}:${time[1]} ${locale[2]}`,
-        };
-      }),
-    );
-
-    setDataPast(
-      dataPointsPast.map((data, index) => {
-        const point = data.ylabel;
-        const locale = data.xlabel.toLocaleString().split(" ");
-        const time = locale[1]!.split(":");
-        return {
-          x: (index + 1) * (width / (dataPointsPast.length + 1)) + 20,
-          y: Math.min(
-            Math.max(
-              heightOffset -
-                heightOffset * (point / yRangeEnd) +
-                heightOffset / 20,
-              heightOffset / 20,
-            ),
-            heightOffset - heightOffset / 20,
-          ),
-          label: `${time[0]}:${time[1]} ${locale[2]}`,
-        };
-      }),
-    );
+  const renderPastTooltip = (index: number) => {
+    let tooltip = "";
+    for (const [_, point] of Object.entries(dataPointsPast[index].ylabel)) {
+      if (point !== null) {
+        tooltip += `${Math.floor(point)} `;
+      }
+    }
+    return tooltip;
   };
 
   return (
@@ -204,73 +173,104 @@ const LineGraph = ({
             viewBox={`0 0 ${width + 20} ${heightOffset + 10}`}
           >
             <g>
-              <path
-                d={path}
-                stroke="#293bff"
-                fill="transparent"
-                fillOpacity={0.3}
-              />
-              <path
-                className=" "
-                d={pathPast}
-                stroke="gray"
-                fill="transparent"
-                fillOpacity={0.3}
-                strokeDasharray={"5"}
-              />
+              {path.map((d, index) => (
+                <path
+                  key={index}
+                  d={d}
+                  stroke={
+                    ["#293bff", "#ff3b3b", "#62466B", "#8C93A8", "#B5C2B7"][
+                      index % 5
+                    ]
+                  }
+                  fill="transparent"
+                  fillOpacity={0.4 - index * 0.1}
+                />
+              ))}
+              {pathPast.map((d, index) => (
+                <path
+                  key={index}
+                  className=" "
+                  d={d}
+                  stroke="gray"
+                  fill="transparent"
+                  fillOpacity={0.3}
+                  strokeDasharray={"5"}
+                />
+              ))}
             </g>
-            {[...Array(data.length + 1)].map((_, index) => (
+            {[...Array(dataPoints.length + 1)].map((_, index) => (
               <g key={index}>
                 <rect
-                  x={index * (width / (data.length + 1)) + 20}
+                  x={index * (width / (dataPoints.length + 1)) + 20}
                   y={0}
-                  width={width / (data.length + 1)}
+                  width={width / (dataPoints.length + 1)}
                   height={heightOffset}
                   fill={["#5d635f", "#2c2e2c"][index % 2]}
                   fillOpacity={0.125}
                 />
               </g>
             ))}
-            {data.map((point, index) => (
+            {dataPoints.map((point_data, index) => {
+              const locale = point_data.xlabel.toLocaleString().split(" ");
+              const time = locale[1]!.split(":");
+              const x =
+                (index + 1) * (width / (dataPointsPast.length + 1)) + 20;
+              return (
+                <g key={index}>
+                  <rect
+                    x={x - (width / (dataPoints.length + 1) + 20) / 2}
+                    y={0}
+                    width={width / (dataPoints.length + 1) + 20}
+                    height={heightOffset}
+                    stroke="transparent"
+                    fillOpacity={0}
+                    className="peer"
+                  />
+                  <text
+                    x={x}
+                    y={heightOffset - 7.5}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="pointer-events-none invisible fill-txt stroke-none text-xs sm:visible"
+                  >
+                    {`${time[0]}:${time[1]} ${locale[2]}`}
+                  </text>
+                  <text
+                    x={x}
+                    y={mouseY - 10}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="sm:text-md pointer-events-none invisible  fill-[#f6f6fa] stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                  >
+                    {renderCurrTooltip(index)}
+                  </text>
+                  <text
+                    x={x}
+                    y={mouseY + 10}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="sm:text-md pointer-events-none invisible  fill-[#f6f6fa] stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                  >
+                    {renderPastTooltip(index)}
+                  </text>
+                </g>
+              );
+            })}
+            {data.map((point_data, index) => (
               <g key={index}>
-                <text
-                  x={
-                    index * (width / (data.length + 1)) +
-                    width / (data.length + 1)
-                  }
-                  y={heightOffset - 7.5}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="pointer-events-none invisible fill-txt stroke-none text-xs sm:visible"
-                >
-                  {point.label}
-                </text>
-                <rect
-                  x={point.x - (width / (dataPoints.length + 1) + 20) / 2}
-                  y={0}
-                  width={width / (dataPoints.length + 1) + 20}
-                  height={heightOffset}
-                  stroke="transparent"
-                  fillOpacity={0}
-                  className="peer"
-                />
-                <circle
-                  cx={point.x}
-                  cy={point.y}
-                  r={3.5}
-                  fill={isDark ? "white" : "gray"}
-                  className="h-full w-full transition-colors peer-hover:fill-yellow-400"
-                />
-                <text
-                  x={point.x + 5}
-                  y={mouseY}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="sm:text-md pointer-events-none invisible  fill-[#f6f6fa] stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
-                >
-                  ({index}, {Math.floor(dataPoints[index].ylabel)}) ({index},{" "}
-                  {Math.floor(dataPointsPast[index].ylabel)})
-                </text>
+                {point_data.map((point, index) => (
+                  <g key={index}>
+                    {point.y !== null && (
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r={3.5}
+                        fill={isDark ? "white" : "gray"}
+                        className="h-full w-full transition-colors peer-hover:fill-yellow-400"
+                      />
+                    )}
+                  </g>
+                ))}
               </g>
             ))}
             <line
@@ -318,10 +318,6 @@ const LineGraph = ({
           </svg>
         )}
       </div>
-
-      <Button onClick={randomizeData} color="secondary" type="button">
-        Random Points
-      </Button>
     </div>
   );
 };

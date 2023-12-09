@@ -19,11 +19,18 @@ const Page = () => {
   for (let i = 0; i < 10; i++) {
     data.push({
       xlabel: date_array[i % date_array.length],
-      ylabel: Math.random() * maxValue,
+      ylabel: {
+        label1: Math.random() < 0.5 ? null : Math.random() * maxValue,
+        label2: Math.random() < 0.5 ? null : Math.random() * maxValue,
+        label3: Math.random() < 0.5 ? null : Math.random() * maxValue,
+      },
     });
     dataPast.push({
       xlabel: date_array[i % date_array.length],
-      ylabel: Math.random() * maxValue,
+      ylabel: {
+        label1: Math.random() * maxValue,
+        label2: Math.random() * maxValue,
+      },
     });
   }
 
