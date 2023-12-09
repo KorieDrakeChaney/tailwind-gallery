@@ -107,7 +107,14 @@ const LineGraph = ({
       let num = 0;
       for (const [_, point] of Object.entries(data.ylabel)) {
         new_data[num][index] = {
-          x: index * (width / dataPoints.length) + 20,
+          x:
+            index == 0
+              ? 20
+              : index == dataPoints.length - 1
+                ? width
+                : index * (width / dataPoints.length) +
+                  width / dataPoints.length / 2 +
+                  20,
           y:
             point == null
               ? null
@@ -139,9 +146,13 @@ const LineGraph = ({
       for (const [_, point] of Object.entries(data.ylabel)) {
         new_data[num][index] = {
           x:
-            index * (width / dataPointsPast.length) +
-            width / dataPointsPast.length / 2 +
-            20,
+            index == 0
+              ? 20
+              : index == dataPointsPast.length - 1
+                ? width
+                : index * (width / dataPointsPast.length) +
+                  width / dataPointsPast.length / 2 +
+                  20,
           y:
             point == null
               ? null
@@ -200,9 +211,7 @@ const LineGraph = ({
         {heightOffset > 100 && (
           <svg
             className="h-full w-full p-4 transition-all"
-            viewBox={`0 0 ${width - width / dataPointsPast.length + 20} ${
-              heightOffset + 10
-            }`}
+            viewBox={`0 0 ${width} ${heightOffset}`}
           >
             <g>
               {path.map((d, index) => (
@@ -236,19 +245,9 @@ const LineGraph = ({
             {[...Array(dataPoints.length - 1)].map((_, index) => (
               <g key={index}>
                 <rect
-                  x={
-                    index == 0
-                      ? 20
-                      : index * (width / dataPoints.length) -
-                        width / dataPoints.length / 2 +
-                        20
-                  }
+                  x={index * (width / dataPoints.length) + 20}
                   y={0}
-                  width={
-                    index == 0 || index == dataPoints.length - 1
-                      ? width / dataPoints.length / 2
-                      : width / dataPoints.length
-                  }
+                  width={width / dataPoints.length}
                   height={heightOffset}
                   fill={["#5d635f", "#2c2e2c"][index % 2]}
                   fillOpacity={0.125}
@@ -264,19 +263,9 @@ const LineGraph = ({
                   <g key={index} className="peer ">
                     <g className="peer">
                       <rect
-                        x={
-                          index == 0
-                            ? 20
-                            : index * (width / dataPoints.length) -
-                              width / dataPoints.length / 2 +
-                              20
-                        }
+                        x={index * (width / dataPoints.length) + 20}
                         y={0}
-                        width={
-                          index == 0 || index == dataPoints.length - 1
-                            ? width / dataPoints.length / 2
-                            : width / dataPoints.length
-                        }
+                        width={width / dataPoints.length}
                         height={heightOffset}
                         stroke="transparent"
                         fillOpacity={0}
@@ -293,50 +282,42 @@ const LineGraph = ({
                         }
                       })}
                     </g>
-                    {index != 0 &&
-                      index != dataPoints.length - 1 &&
-                      data.length > 0 && (
-                        <text
-                          x={index * (width / dataPoints.length) + 20}
-                          y={heightOffset - 7.5}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          className="pointer-events-none invisible fill-white stroke-none text-xs sm:visible"
-                        >
-                          {`${time[0]}:${time[1]} ${locale[2]}`}
-                        </text>
-                      )}
                     <text
                       x={
-                        index != 0
-                          ? index != dataPoints.length - 1
-                            ? x + 20
-                            : index * (width / dataPoints.length) -
-                              width / dataPoints.length / 2 +
-                              20
-                          : width / dataPoints.length / 2 + 20
+                        index * (width / dataPoints.length) +
+                        width / dataPoints.length / 2 +
+                        20
+                      }
+                      y={heightOffset - 7.5}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="pointer-events-none invisible fill-txt stroke-none text-xs sm:visible"
+                    >
+                      {`${time[0]}:${time[1]} ${locale[2]}`}
+                    </text>
+                    <text
+                      x={
+                        index * (width / dataPoints.length) +
+                        width / dataPoints.length / 2 +
+                        20
                       }
                       y={mouseY - 10}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="sm:text-md pointer-events-none invisible  fill-white stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                      className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
                     >
                       {renderCurrTooltip(index)}
                     </text>
                     <text
                       x={
-                        index != 0
-                          ? index != dataPoints.length - 1
-                            ? x + 20
-                            : index * (width / dataPoints.length) -
-                              width / dataPoints.length / 2 +
-                              20
-                          : width / dataPoints.length / 2 + 20
+                        index * (width / dataPoints.length) +
+                        width / dataPoints.length / 2 +
+                        20
                       }
                       y={mouseY + 10}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="sm:text-md pointer-events-none invisible  fill-white stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                      className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
                     >
                       {renderPastTooltip(index)}
                     </text>
