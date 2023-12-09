@@ -140,7 +140,6 @@ const LineGraph = ({
 
   useEffect(() => {
     const new_path = dataPast.map((data) => getPath(data));
-    console.log(new_path);
     setPathPast(new_path);
   }, [dataPast]);
 
@@ -221,16 +220,38 @@ const LineGraph = ({
               const time = locale[1]!.split(":");
               const x = index * (width / dataPointsPast.length);
               return (
-                <g key={index}>
-                  <rect
-                    x={x + 20}
-                    y={0}
-                    width={width / dataPoints.length}
-                    height={heightOffset}
-                    stroke="transparent"
-                    fillOpacity={0}
-                    className="peer"
-                  />
+                <g key={index} className="peer hover:fill-black">
+                  <g className="peer">
+                    <rect
+                      x={x + 20}
+                      y={0}
+                      width={width / dataPoints.length}
+                      height={heightOffset}
+                      stroke="transparent"
+                      fillOpacity={0}
+                      className="peer"
+                    />
+                    {[
+                      ...Array(Object.entries(dataPoints[0].ylabel).length),
+                    ].map((_, i) => {
+                      const point = data[i][index];
+                      return (
+                        <g
+                          key={index}
+                          className="fill-white peer-hover:fill-yellow-400"
+                        >
+                          {point.y !== null && (
+                            <circle
+                              cx={point.x}
+                              cy={point.y}
+                              r={3.5}
+                              className="h-full w-full transition-colors"
+                            />
+                          )}
+                        </g>
+                      );
+                    })}
+                  </g>
                   <text
                     x={x + width / dataPoints.length / 2 + 20}
                     y={heightOffset - 7.5}
@@ -261,23 +282,7 @@ const LineGraph = ({
                 </g>
               );
             })}
-            {data.map((point_data, index) => (
-              <g key={index}>
-                {point_data.map((point, index) => (
-                  <g key={index}>
-                    {point.y !== null && (
-                      <circle
-                        cx={point.x}
-                        cy={point.y}
-                        r={3.5}
-                        fill={isDark ? "white" : "gray"}
-                        className="h-full w-full transition-colors peer-hover:fill-yellow-400"
-                      />
-                    )}
-                  </g>
-                ))}
-              </g>
-            ))}
+
             <line
               x1="20"
               y1="0"
