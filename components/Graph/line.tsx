@@ -79,7 +79,6 @@ const LineGraph = ({
   const { width = 1, height = 1 } = useResizeObserver({ ref });
 
   const [heightOffset, setHeightOffset] = useState(height - 90);
-  const [widthOffset, setWidthOffset] = useState(height - 90);
   const [mouseY, setMouseY] = useState(0);
 
   useEffect(() => {
@@ -94,10 +93,6 @@ const LineGraph = ({
     };
     addEventListener("mousemove", handleMouse);
   }, []);
-
-  useEffect(() => {
-    setHeightOffset(height - 90);
-  }, [height]);
 
   useEffect(() => {
     setHeightOffset(height - 90);
@@ -316,7 +311,7 @@ const LineGraph = ({
                           : index * (width / dataPoints.length) -
                             width / dataPoints.length / 2 +
                             20
-                        : x + width / dataPoints.length / 2
+                        : width / dataPoints.length / 2 + 20
                     }
                     y={mouseY - 10}
                     textAnchor="middle"
@@ -333,7 +328,7 @@ const LineGraph = ({
                           : index * (width / dataPoints.length) -
                             width / dataPoints.length / 2 +
                             20
-                        : x + width / dataPoints.length / 2
+                        : width / dataPoints.length / 2 + 20
                     }
                     y={mouseY + 10}
                     textAnchor="middle"
