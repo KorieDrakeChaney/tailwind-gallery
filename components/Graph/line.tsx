@@ -28,7 +28,7 @@ const getPath = (
       tempPath += point.x + "," + point.y + "L";
     }
   });
-  tempPath += width + 20 + "," + 0;
+  tempPath += width + 20 + "," + height;
   return tempPath;
 };
 
@@ -290,16 +290,7 @@ const LineGraph = ({
               y2={heightOffset}
               stroke={isDark ? "white" : "black"}
             />
-            <line
-              x1="20"
-              y1={heightOffset / 20}
-              x2={width + 20}
-              y2={heightOffset / 20}
-              stroke="white"
-              fill="transparent"
-              fillOpacity={0.3}
-              strokeDasharray={"5"}
-            />
+
             <g>
               <text
                 x={0}
