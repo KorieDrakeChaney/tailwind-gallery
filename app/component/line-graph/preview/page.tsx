@@ -30,6 +30,7 @@ const Page = () => {
       ylabel: {
         label1: Math.random() * maxValue,
         label2: Math.random() * maxValue,
+        label3: Math.random() * maxValue,
       },
     });
   }

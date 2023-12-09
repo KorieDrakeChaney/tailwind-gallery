@@ -189,11 +189,14 @@ const LineGraph = ({
               {pathPast.map((d, index) => (
                 <path
                   key={index}
-                  className=" "
+                  className="opacity-[0.5]"
                   d={d}
-                  stroke="gray"
+                  stroke={
+                    ["#293bff", "#ff3b3b", "#62466B", "#8C93A8", "#B5C2B7"][
+                      index % 5
+                    ]
+                  }
                   fill="transparent"
-                  fillOpacity={0.3}
                   strokeDasharray={"5"}
                 />
               ))}
