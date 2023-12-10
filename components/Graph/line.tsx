@@ -73,6 +73,7 @@ const LineGraph = ({
     [],
   );
   const ref = useRef(null);
+  const xOffset = 40;
 
   const { width = 1, height = 1 } = useResizeObserver({ ref });
 
@@ -84,8 +85,8 @@ const LineGraph = ({
       if (ref.current) {
         setMouseY(
           e.clientY -
-            (ref.current as HTMLDivElement).getBoundingClientRect().top -
-            35,
+            (ref.current as HTMLDivElement).getBoundingClientRect().top +
+            5,
         );
       }
     };
@@ -109,21 +110,21 @@ const LineGraph = ({
         new_data[num][index] = {
           x:
             index == 0
-              ? 20
+              ? xOffset
               : index == dataPoints.length - 1
-                ? width + 20
-                : index * (width / dataPoints.length) +
-                  width / dataPoints.length / 2 +
-                  20,
+                ? width - width / dataPoints.length + xOffset
+                : index * (width / dataPoints.length) + xOffset,
           y:
             point == null
               ? null
               : Math.min(
                   Math.max(
-                    heightOffset - heightOffset * (point / yRangeEnd),
-                    0,
+                    heightOffset -
+                      heightOffset * (point / yRangeEnd) +
+                      heightOffset / 20,
+                    heightOffset / 20,
                   ),
-                  heightOffset,
+                  heightOffset - heightOffset / 20,
                 ),
         };
         num++;
@@ -145,21 +146,21 @@ const LineGraph = ({
         new_data[num][index] = {
           x:
             index == 0
-              ? 20
+              ? xOffset
               : index == dataPointsPast.length - 1
-                ? width + 20
-                : index * (width / dataPointsPast.length) +
-                  width / dataPointsPast.length / 2 +
-                  20,
+                ? width - width / dataPointsPast.length + xOffset
+                : index * (width / dataPointsPast.length) + xOffset,
           y:
             point == null
               ? null
               : Math.min(
                   Math.max(
-                    heightOffset - heightOffset * (point / yRangeEnd),
-                    0,
+                    heightOffset -
+                      heightOffset * (point / yRangeEnd) +
+                      heightOffset / 20,
+                    heightOffset / 20,
                   ),
-                  heightOffset,
+                  heightOffset - heightOffset / 20,
                 ),
         };
         num++;
@@ -207,7 +208,7 @@ const LineGraph = ({
         {heightOffset > 100 && (
           <svg
             className="h-full w-full p-4 transition-all"
-            viewBox={`0 0 ${width + 20} ${heightOffset}`}
+            viewBox={`0 0 ${width} ${height}`}
           >
             <g>
               {path.map((d, index) => (
@@ -241,9 +242,19 @@ const LineGraph = ({
             {[...Array(dataPoints.length)].map((_, index) => (
               <g key={index}>
                 <rect
-                  x={index * (width / dataPoints.length) + 20}
+                  x={
+                    index == 0
+                      ? xOffset
+                      : index * (width / dataPoints.length) -
+                        width / dataPoints.length / 2 +
+                        xOffset
+                  }
                   y={0}
-                  width={width / dataPoints.length}
+                  width={
+                    index == 0 || index == dataPoints.length - 1
+                      ? width / dataPoints.length / 2
+                      : width / dataPoints.length
+                  }
                   height={heightOffset}
                   fill={["#5d635f", "#2c2e2c"][index % 2]}
                   fillOpacity={0.125}
@@ -253,85 +264,79 @@ const LineGraph = ({
             {dataPoints.map((point_data, index) => {
               const locale = point_data.xlabel.toLocaleString().split(" ");
               const time = locale[1]!.split(":");
+              const x = index * (width / dataPointsPast.length);
               return (
-                data.length > 0 && (
-                  <g key={index} className="peer ">
-                    <g className="peer">
-                      <rect
-                        x={index * (width / dataPoints.length) + 20}
-                        y={0}
-                        width={width / dataPoints.length}
-                        height={heightOffset}
-                        stroke="transparent"
-                        fillOpacity={0}
-                        className="peer"
-                      />
-                      {[
-                        ...Array(Object.entries(dataPoints[0]!.ylabel).length),
-                      ].map((_, i) => {
-                        if (data.length != 0) {
-                          const point = data[i]![index];
-                          return (
-                            <CircleGroup key={i} point={point!} index={index} />
-                          );
-                        }
-                      })}
-                    </g>
-                    <text
+                <g key={index} className="peer ">
+                  <g className="peer">
+                    <rect
                       x={
-                        index * (width / dataPoints.length) +
-                        width / dataPoints.length / 2 +
-                        20
+                        index == 0
+                          ? xOffset
+                          : index * (width / dataPoints.length) -
+                            width / dataPoints.length / 2 +
+                            xOffset
                       }
-                      y={heightOffset - 7.5}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="pointer-events-none invisible fill-txt stroke-none text-xs sm:visible"
-                    >
-                      {`${time[0]}:${time[1]} ${locale[2]}`}
-                    </text>
-                    <text
-                      x={
-                        index * (width / dataPoints.length) +
-                        width / dataPoints.length / 2 +
-                        20
+                      y={0}
+                      width={
+                        index == 0 || index == dataPoints.length - 1
+                          ? width / dataPoints.length / 2
+                          : width / dataPoints.length
                       }
-                      y={mouseY - 10}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
-                    >
-                      {renderCurrTooltip(index)}
-                    </text>
-                    <text
-                      x={
-                        index * (width / dataPoints.length) +
-                        width / dataPoints.length / 2 +
-                        20
-                      }
-                      y={mouseY + 10}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
-                    >
-                      {renderPastTooltip(index)}
-                    </text>
+                      height={heightOffset}
+                      stroke="transparent"
+                      fillOpacity={0}
+                      className="peer"
+                    />
+                    {[
+                      ...Array(Object.entries(dataPoints[0].ylabel).length),
+                    ].map((_, i) => {
+                      const point = data[i][index];
+                      return (
+                        <CircleGroup key={i} point={point} index={index} />
+                      );
+                    })}
                   </g>
-                )
+                  <text
+                    x={index * (width / dataPoints.length) + xOffset}
+                    y={heightOffset + 10}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="pointer-events-none invisible fill-txt stroke-none text-xs sm:visible"
+                  >
+                    {`${time[0]}:${time[1]} ${locale[2]}`}
+                  </text>
+                  <text
+                    x={x + xOffset}
+                    y={mouseY - 10}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                  >
+                    {renderCurrTooltip(index)}
+                  </text>
+                  <text
+                    x={x + xOffset}
+                    y={mouseY + 10}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="sm:text-md pointer-events-none invisible  fill-txt stroke-none text-xs font-medium peer-hover:visible lg:text-xl"
+                  >
+                    {renderPastTooltip(index)}
+                  </text>
+                </g>
               );
             })}
-
             <line
-              x1="20"
-              y1="0"
-              x2="20"
+              x1={xOffset}
+              y1={0}
+              x2={xOffset}
               y2={heightOffset}
               stroke={isDark ? "white" : "black"}
             />
             <line
-              x1="20"
+              x1={10}
               y1={heightOffset}
-              x2={width + 20}
+              x2={width}
               y2={heightOffset}
               stroke={isDark ? "white" : "black"}
             />
@@ -347,7 +352,7 @@ const LineGraph = ({
               </text>
               <text
                 x={0}
-                y={0}
+                y={10}
                 textAnchor="start"
                 className="sm:text-md pointer-events-none fill-txt text-sm"
               >
