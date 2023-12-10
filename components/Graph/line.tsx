@@ -334,9 +334,9 @@ const LineGraph = ({
               stroke={isDark ? "white" : "black"}
             />
             <line
-              x1={10}
+              x1={xOffset}
               y1={heightOffset}
-              x2={width}
+              x2={width - width / dataPoints.length + xOffset}
               y2={heightOffset}
               stroke={isDark ? "white" : "black"}
             />
